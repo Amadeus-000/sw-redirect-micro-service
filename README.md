@@ -1,11 +1,12 @@
 # sw-redirect-micro-service
 
-Hello World を返す AWS Lambda マイクロサービス。  
+## このリポジトリ
+work_idを介してmicroCMSに保存されているredirect_urlに転送するマイクロサービス
 
 ## ディレクトリ構成
-
 ```
 .
+├── main.py                         #ローカル実行用ファイル
 ├── src/
 │   └── handler.py                  # Lambda ハンドラー
 ├── .github/
@@ -14,18 +15,17 @@ Hello World を返す AWS Lambda マイクロサービス。
 └── .gitignore
 ```
 
-
-
-### 3. main ブランチへ push
-
+### デプロイ先
+mainブランチでpushするとAWS Lambdaにデプロイされる
 ```bash
 git push origin main
 ```
 
-```
+### ローカル動作確認
+- スクリプトとして実行
+`uv run python main.py`
 
-## ローカル動作確認
-
+- dockerコンテナを立ち上げて、APIを叩いて実行
 ```bash
 docker build -t sw-redirect-lambda .
 docker run -p 9000:8080 sw-redirect-lambda
