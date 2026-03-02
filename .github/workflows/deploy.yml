@@ -64,7 +64,6 @@ jobs:
             aws lambda update-function-code \
               --function-name $LAMBDA_FUNCTION_NAME \
               --image-uri $IMAGE_URI \
-              --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
           else
             echo "Creating Lambda..."
             aws lambda create-function \
@@ -75,5 +74,9 @@ jobs:
               --architectures x86_64 \
               --timeout 10 \
               --memory-size 128 \
-              --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
           fi
+      - name: Update environment variables
+        run: |
+          aws lambda update-function-configuration \
+            --function-name $LAMBDA_FUNCTION_NAME \
+            --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
