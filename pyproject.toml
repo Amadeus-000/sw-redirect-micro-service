@@ -7,9 +7,41 @@ requires-python = ">=3.12"
 dependencies = [
     "aws-lambda-typing>=2.20.0",
     "cryptography>=46.0.5",
+    "requests>=2.32.5",
 ]
 
 [tool.ty]
 python-version = "3.12"
 include = ["."]
 inlay-hints = false
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.4",
+    "ty>=0.0.19",
+]
+
+# ルールセット (人気 + 厳しめ + 安全)
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+    "T20",  # flake8-print
+]
+
+line-length = 100
+indent-width = 3
+# 自動アップグレード (pyupgrade)
+[tool.ruff.pyupgrade]
+keep-runtime-typing = false
+# format コマンドも使う場合
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false

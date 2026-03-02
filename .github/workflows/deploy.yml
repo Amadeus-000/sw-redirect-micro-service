@@ -16,6 +16,7 @@ env:
   LAMBDA_FUNCTION_NAME: sw-redirect-micro-service
   EXECUTION_ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-lambda-execution-role
   ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-github-actions
+  MICRO_CMS_API_KEY: v78SMcjBh5dTz30DYLPCau4vIBk6VsanT0YI
 
 jobs:
   deploy:
@@ -62,7 +63,8 @@ jobs:
             echo "Lambda exists. Updating..."
             aws lambda update-function-code \
               --function-name $LAMBDA_FUNCTION_NAME \
-              --image-uri $IMAGE_URI
+              --image-uri $IMAGE_URI \
+              --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
           else
             echo "Creating Lambda..."
             aws lambda create-function \
@@ -72,5 +74,6 @@ jobs:
               --role $EXECUTION_ROLE_ARN \
               --architectures x86_64 \
               --timeout 10 \
-              --memory-size 128
+              --memory-size 128 \
+              --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
           fi
