@@ -63,7 +63,7 @@ jobs:
             echo "Lambda exists. Updating..."
             aws lambda update-function-code \
               --function-name $LAMBDA_FUNCTION_NAME \
-              --image-uri $IMAGE_URI \
+              --image-uri $IMAGE_URI
           else
             echo "Creating Lambda..."
             aws lambda create-function \
@@ -73,7 +73,7 @@ jobs:
               --role $EXECUTION_ROLE_ARN \
               --architectures x86_64 \
               --timeout 10 \
-              --memory-size 128 \
+              --memory-size 128
           fi
       - name: Update environment variables
         run: |
