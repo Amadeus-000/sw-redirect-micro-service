@@ -96,15 +96,14 @@ GitHub Actions Runner
 ## ローカル動作確認
 
 ```bash
-python3 - <<'EOF'
-import sys; sys.path.insert(0, 'src')
-from handler import lambda_handler
-print(lambda_handler({}, {}))
-EOF
-```
-
-期待出力:
-
-```
-{'statusCode': 200, 'headers': {'Content-Type': 'application/json'}, 'body': '{"message": "Hello, World!"}'}
+docker build -t sw-redirect-lambda .
+docker run -p 9000:8080 sw-redirect-lambda
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -d '{
+    "httpMethod": "GET",
+    "path": "/redirect",
+    "queryStringParameters": {
+      "url": "https://example.com"
+    }
+  }'
 ```
