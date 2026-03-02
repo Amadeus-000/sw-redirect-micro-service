@@ -1,4 +1,4 @@
-name: Build and Push to ECR
+name: Build Push and Create Lambda
 
 on:
   push:
@@ -13,24 +13,23 @@ env:
   AWS_REGION: ap-northeast-1
   ACCOUNT_ID: 175948132408
   ECR_REPOSITORY: sw-redirect-micro-service
+  LAMBDA_FUNCTION_NAME: sw-redirect-micro-service
+  EXECUTION_ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-lambda-execution-role
   ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-github-actions
 
 jobs:
-  build-and-push:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # OIDC認証
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # ECRログイン
       - name: Login to ECR
         run: |
           aws ecr get-login-password --region $AWS_REGION \
@@ -38,21 +37,40 @@ jobs:
             --username AWS \
             --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      # Dockerビルド
       - name: Build Docker image
         run: |
           docker build -t $ECR_REPOSITORY .
 
-      # タグ付け（コミットハッシュ推奨）
       - name: Tag image
         run: |
           IMAGE_TAG=${{ github.sha }}
           docker tag $ECR_REPOSITORY:latest \
             $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Push
       - name: Push image
         run: |
           IMAGE_TAG=${{ github.sha }}
           docker push \
             $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Create Lambda if not exists
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+          if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME 2>/dev/null; then
+            echo "Lambda exists. Updating..."
+            aws lambda update-function-code \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --image-uri $IMAGE_URI
+          else
+            echo "Creating Lambda..."
+            aws lambda create-function \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --package-type Image \
+              --code ImageUri=$IMAGE_URI \
+              --role $EXECUTION_ROLE_ARN \
+              --architectures x86_64 \
+              --timeout 10 \
+              --memory-size 128
+          fi
