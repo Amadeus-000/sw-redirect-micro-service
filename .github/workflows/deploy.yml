@@ -75,6 +75,10 @@ jobs:
               --timeout 10 \
               --memory-size 128
           fi
+      - name : Wait for Lambda update
+        run: |
+          aws lambda wait function-updated \
+            --function-name $LAMBDA_FUNCTION_NAME
       - name: Update environment variables
         run: |
           aws lambda update-function-configuration \
