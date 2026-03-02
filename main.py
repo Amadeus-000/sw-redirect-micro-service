@@ -7,4 +7,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    lambda_handler({}, context_.Context())
+    response = lambda_handler({"queryStringParameters": {"work_id": "example_work_id"}}, context_.Context())
+    print(response)
