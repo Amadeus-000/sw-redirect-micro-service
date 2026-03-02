@@ -135,16 +135,12 @@ name = "sw-redirect-micro-service"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "aws-lambda-typing" },
     { name = "cryptography" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "aws-lambda-typing" },
-]
-
 [package.metadata]
-requires-dist = [{ name = "cryptography", specifier = ">=46.0.5" }]
-
-[package.metadata.requires-dev]
-dev = [{ name = "aws-lambda-typing", specifier = ">=2.20.0" }]
+requires-dist = [
+    { name = "aws-lambda-typing", specifier = ">=2.20.0" },
+    { name = "cryptography", specifier = ">=46.0.5" },
+]
