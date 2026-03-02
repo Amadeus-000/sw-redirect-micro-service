@@ -1,80 +1,58 @@
-name: Deploy Lambda
+name: Build and Push to ECR
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
-# OIDC トークン発行に必要
 permissions:
   id-token: write
   contents: read
 
 env:
   AWS_REGION: ap-northeast-1
-  FUNCTION_NAME: sw-redirect-hello-world
+  ACCOUNT_ID: 175948132408
+  ECR_REPOSITORY: sw-redirect-micro-service
+  ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-github-actions
 
 jobs:
-  deploy:
-    name: Package & Deploy
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # ────────────────────────────────────────────
-      # 1. チェックアウト
-      # ────────────────────────────────────────────
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # ────────────────────────────────────────────
-      # 2. AWS 認証（OIDC）
-      #    secrets.AWS_DEPLOY_ROLE_ARN に
-      #    bootstrap.sh の出力 ARN を設定してください
-      # ────────────────────────────────────────────
-      - name: Configure AWS Credentials via OIDC
+      # OIDC認証
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # ────────────────────────────────────────────
-      # 3. デプロイパッケージ作成
-      # ────────────────────────────────────────────
-      - name: Build Lambda package
+      # ECRログイン
+      - name: Login to ECR
         run: |
-          mkdir -p dist
-          zip -j dist/lambda.zip src/handler.py
+          aws ecr get-login-password --region $AWS_REGION \
+          | docker login \
+            --username AWS \
+            --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      # ────────────────────────────────────────────
-      # 4. Lambda コード更新
-      # ────────────────────────────────────────────
-      - name: Deploy to Lambda
+      # Dockerビルド
+      - name: Build Docker image
         run: |
-          aws lambda update-function-code \
-            --function-name "${{ env.FUNCTION_NAME }}" \
-            --zip-file fileb://dist/lambda.zip \
-            --region "${{ env.AWS_REGION }}"
+          docker build -t $ECR_REPOSITORY .
 
-      # ────────────────────────────────────────────
-      # 5. 更新完了を待機
-      # ────────────────────────────────────────────
-      - name: Wait for Lambda update
+      # タグ付け（コミットハッシュ推奨）
+      - name: Tag image
         run: |
-          aws lambda wait function-updated \
-            --function-name "${{ env.FUNCTION_NAME }}" \
-            --region "${{ env.AWS_REGION }}"
+          IMAGE_TAG=${{ github.sha }}
+          docker tag $ECR_REPOSITORY:latest \
+            $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # ────────────────────────────────────────────
-      # 6. スモークテスト（Function URL 経由）
-      # ────────────────────────────────────────────
-      - name: Smoke test
+      # Push
+      - name: Push image
         run: |
-          URL=$(aws lambda get-function-url-config \
-            --function-name "${{ env.FUNCTION_NAME }}" \
-            --query 'FunctionUrl' --output text \
-            --region "${{ env.AWS_REGION }}")
-          echo "Function URL: ${URL}"
-          RESPONSE=$(curl -sf "${URL}")
-          echo "Response: ${RESPONSE}"
-          echo "${RESPONSE}" | grep -q "Hello, World!"
+          IMAGE_TAG=${{ github.sha }}
+          docker push \
+            $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
