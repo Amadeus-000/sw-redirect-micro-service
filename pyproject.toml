@@ -1,0 +1,19 @@
+[project]
+name = "sw-redirect-micro-service"
+version = "1.0.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cryptography>=46.0.5",
+]
+
+[dependency-groups]
+dev = [
+    "aws-lambda-typing>=2.20.0",
+]
+
+[tool.ty]
+python-version = "3.12"
+include = ["."]
+inlay-hints = false
