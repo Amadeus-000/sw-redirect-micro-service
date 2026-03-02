@@ -7,17 +7,57 @@ from aws_lambda_typing.responses import APIGatewayProxyResponseV2
 
 def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
     path = event.get('rawPath', '/')
+    if path == "/redirect":
+        return handle_redirect(event, context)
+    if path == "redirect-test":
+        return handle_redirect(event, context)
+    return {
+            "statusCode": 302,
+            "headers": {
+                "Location": "TODO: sw-url",
+            },
+            "body": "",
+        }
+
+def handle_redirect_test(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
     query_params = event.get('queryStringParameters', {}) or {}
     work_id = query_params.get('work_id')
 
     if not work_id:
-        work_id = "No work_id provided"
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"message": "work_id is required"}),
+        }
+    
+    redirect_url = f"https://example.com/works/{work_id}"
     
     return {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "application/json",
+            "Location": redirect_url,
         },
-        "body": json.dumps({"message": "Hello, World!", "path": path, "work_id": work_id}),
+        "body": f"Redirecting to {redirect_url}",
     }
 
+def handle_redirect(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
+    query_params = event.get('queryStringParameters', {}) or {}
+    work_id = query_params.get('work_id')
+
+    if not work_id:
+        return {
+            "statusCode": 302,
+            "headers": {
+                "Location": "TODO: sw-url",
+            },
+            "body": "",
+        }
+    
+    redirect_url = f"https://example.com/works/{work_id}"
+    
+    return {
+        "statusCode": 302,
+        "headers": {
+            "Location": redirect_url,
+        },
+        "body": f"Redirecting to {redirect_url}",
+    }
