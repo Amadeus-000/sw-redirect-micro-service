@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-# TODO: 作りかけ
 docker build -t sw-redirect-lambda .
 docker run -d -p 9000:8080 sw-redirect-lambda
 curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
   -d '{
     "httpMethod": "GET",
-    "path": "/redirect-test",
+    "path": "'"${1:-/test}"'",
     "queryStringParameters": {
-      "work_id": "test123"
+      "work_id": "'"${2:-test123}"'"
     }
   }'
+docker stop $(docker ps -q)

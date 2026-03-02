@@ -24,7 +24,7 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
             "headers": {
                 "Location": "TODO: sw-url",
             },
-            "body": "",
+            "body": "default redirect",
         }
 
 def handle_redirect_test(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
