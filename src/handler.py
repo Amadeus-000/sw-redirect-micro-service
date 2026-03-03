@@ -35,25 +35,45 @@ def lambda_handler(
 def handle_redirect(
     event: APIGatewayProxyEventV2, context: context_.Context
 ) -> APIGatewayProxyResponseV2:
-    query_params = event.get("queryStringParameters", {}) or {}
-    id = query_params.get("id") or ""
-    work_id = decrypt(id)
-    redirect_url = fetch_redirect_url(work_id)
-    if not redirect_url:
+    try:
+        query_params = event.get("queryStringParameters", {}) or {}
+        encrypted_id = query_params.get("id") or ""
+
+        if not encrypted_id:
+            print("Error: id parameter is missing")
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"error": "id parameter is required"}),
+            }
+
+        print(f"Encrypted ID: {encrypted_id}")
+        work_id = decrypt(encrypted_id)
+        print(f"Decrypted work_id: {work_id}")
+
+        redirect_url = fetch_redirect_url(work_id)
+        print(f"Redirect URL: {redirect_url}")
+
+        if not redirect_url:
+            return {
+                "statusCode": 302,
+                "headers": {
+                    "Location": "https://google.com",
+                },
+                "body": "",
+            }
         return {
             "statusCode": 302,
             "headers": {
-                "Location": "https://google.com",
+                "Location": redirect_url,
             },
-            "body": "",
+            "body": f"Redirecting to {redirect_url}",
         }
-    return {
-        "statusCode": 302,
-        "headers": {
-            "Location": redirect_url,
-        },
-        "body": f"Redirecting to {redirect_url}",
-    }
+    except Exception as e:
+        print(f"Error in handle_redirect: {str(e)}")
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": f"Failed to process redirect: {str(e)}"}),
+        }
 
 
 def handle_encrypt_id(
