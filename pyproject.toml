@@ -21,6 +21,7 @@ dev = [
     "ty>=0.0.19",
 ]
 
+[tool.ruff]
 # ルールセット (人気 + 厳しめ + 安全)
 select = [
     "E",    # pycodestyle errors
@@ -36,6 +37,7 @@ select = [
 
 line-length = 200
 indent-width = 3
+
 # 自動アップグレード (pyupgrade)
 [tool.ruff.pyupgrade]
 keep-runtime-typing = false
