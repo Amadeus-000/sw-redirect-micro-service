@@ -34,7 +34,7 @@ select = [
     "T20",  # flake8-print
 ]
 
-line-length = 100
+line-length = 200
 indent-width = 3
 # 自動アップグレード (pyupgrade)
 [tool.ruff.pyupgrade]
