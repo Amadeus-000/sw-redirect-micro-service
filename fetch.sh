@@ -8,7 +8,7 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
     "httpMethod": "GET",
     "path": "'"${1:-/test}"'",
     "queryStringParameters": {
-      "work_id": "'"${2:-test123}"'"
+      "id": "'"${2:-test123}"'"
     }
   }'
 docker logs $(docker ps -q)

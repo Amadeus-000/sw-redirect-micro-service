@@ -13,11 +13,11 @@ def lambda_handler(
 ) -> APIGatewayProxyResponseV2:
     path = path = event.get("rawPath") or event.get("path") or "/"
     print(f"Received request for path: {path}")
-    if path == "/redirect":
+    if path == "redirect":
         return handle_redirect(event, context)
-    if path == "/encrypt-id":
+    if path == "encrypt-id":
         return handle_encrypt_id(event, context)
-    if path == "/test":
+    if path == "test":
         redirect_url = fetch_redirect_url("google")
         return {
             "statusCode": 200,
@@ -35,6 +35,7 @@ def lambda_handler(
 def handle_redirect(
     event: APIGatewayProxyEventV2, context: context_.Context
 ) -> APIGatewayProxyResponseV2:
+    print("Handling redirect request")
     try:
         query_params = event.get("queryStringParameters", {}) or {}
         encrypted_id = query_params.get("id") or ""
