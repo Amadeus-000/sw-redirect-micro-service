@@ -58,7 +58,7 @@ def handle_redirect(
             return {
                 "statusCode": 302,
                 "headers": {
-                    "Location": "https://google.com",
+                    "Location": "https://www.yahoo.co.jp/",
                 },
                 "body": "",
             }
