@@ -8,6 +8,5 @@ __pycache__/
 *.pyd
 .venv/
 venv/
-
 # OS
 .DS_Store

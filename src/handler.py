@@ -8,7 +8,8 @@ from aws_lambda_typing.responses import APIGatewayProxyResponseV2
 
 
 def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
-    path = event.get('rawPath', '/')
+    path = path = event.get('rawPath') or event.get('path') or "/"
+    print(f"Received request for path: {path}")
     if path == "/redirect":
         return handle_redirect(event, context)
     if path == "redirect-test":
@@ -87,4 +88,5 @@ def fetch_redirect_url(work_id: str)-> str|None:
     )
     response.raise_for_status()
     data = response.json()
-    return data[0]["redirect_url"] if data else None
+    contents = data.get("contents", [])
+    return contents[0]["redirect_url"] if contents else None
