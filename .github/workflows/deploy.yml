@@ -17,6 +17,8 @@ env:
   EXECUTION_ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-lambda-execution-role
   ROLE_ARN: arn:aws:iam::175948132408:role/sw-redirect-github-actions
   MICRO_CMS_API_KEY: v78SMcjBh5dTz30DYLPCau4vIBk6VsanT0YI
+  ENCRYPTION_KEY: -2moMUhMoXme9-fueeqtxevuwNOkopq8LaP4dUxQeiQ=
+
 
 jobs:
   deploy:
@@ -83,4 +85,4 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name $LAMBDA_FUNCTION_NAME \
-            --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY}"
+            --environment "Variables={MICRO_CMS_API_KEY=$MICRO_CMS_API_KEY,ENCRYPTION_KEY=$ENCRYPTION_KEY}"
