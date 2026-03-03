@@ -38,3 +38,6 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
     }
   }'
 ```
+
+## サンプルURL
+`https://25hhmbph7d.execute-api.ap-northeast-1.amazonaws.com/redirect/?id=gAAAAABppnemM5vJ0GryVayGiv1DHFT5lRIiL_IV8Ou1DxFJL9bucUYyOuXCEXIKIL7JkWncdRZycALjJ1pZXAONtcAveYW2Jw==`
