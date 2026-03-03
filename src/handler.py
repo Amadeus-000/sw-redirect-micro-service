@@ -11,7 +11,7 @@ from services.micro_cms import fetch_redirect_url
 def lambda_handler(
     event: APIGatewayProxyEventV2, context: context_.Context
 ) -> APIGatewayProxyResponseV2:
-    path = path = event.get("rawPath") or event.get("path") or "/"
+    path = (event.get("rawPath") or event.get("path") or "").strip("/") or ""
     print(f"Received request for path: {path}")
     if path == "redirect":
         return handle_redirect(event, context)
