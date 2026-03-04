@@ -25,7 +25,7 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
       }
    return {
       "statusCode": 200,
-      "body": "default redirect",
+      "body": "fail redirect",
    }
 
 
