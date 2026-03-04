@@ -41,3 +41,25 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
 
 ## サンプルURL
 `https://25hhmbph7d.execute-api.ap-northeast-1.amazonaws.com/redirect/?id=gAAAAABppnemM5vJ0GryVayGiv1DHFT5lRIiL_IV8Ou1DxFJL9bucUYyOuXCEXIKIL7JkWncdRZycALjJ1pZXAONtcAveYW2Jw==`
+
+`https://dqqvl5huzxx3uy7vih5xn5elly0poazt.lambda-url.ap-northeast-1.on.aws/redirect/?id=gAAAAABppnemM5vJ0GryVayGiv1DHFT5lRIiL_IV8Ou1DxFJL9bucUYyOuXCEXIKIL7JkWncdRZycALjJ1pZXAONtcAveYW2Jw==`
+
+`https://dqqvl5huzxx3uy7vih5xn5elly0poazt.lambda-url.ap-northeast-1.on.aws/redirect/?id=gAAAAABpp_sAbVKIVzo8TjlPXiol-4yonoJuiCYK4cOed53CcmBdLzbh2ocvSqIckUP7Fg3rdbERuWgT7gxE5xapBXBqnP-VTQ==`
+
+URLエンコード
+`https://dqqvl5huzxx3uy7vih5xn5elly0poazt.lambda-url.ap-northeast-1.on.aws/redirect?id=gAAAAABpqAjrwo3tuFfJadLPkOWqw1vOh7rIIE4SbQVy39f5zhuuX6TgwC-8UaNSiuigbjHT0c02ml0LC4u7jR-wpCACSn7AVQ%3D%3D`
+
+
+## work_idのencrypt
+- ローカルの場合
+   `python encrypt.py <work_id>`
+
+
+## インフラアーキテクチャ
+Client
+↓
+Cloudflare (CDN + WAF + DDoS)
+↓
+Lambda Function URL
+↓
+Lambda
