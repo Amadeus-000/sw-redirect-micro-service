@@ -21,6 +21,7 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
       redirect_url = fetch_redirect_url("google")
       return {
          "statusCode": 200,
+         "headers": {"Content-Type": "application/json"},
          "body": json.dumps({"message": f"redirect_url: {redirect_url}"}),
       }
    return {
