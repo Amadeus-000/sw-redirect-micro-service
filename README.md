@@ -62,10 +62,10 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
 ※URLエンコード必須
 
 ## アーキテクチャ
-Client
+Cloudflare: ドメイン管理と DNS だけ
 ↓
-Cloudflare (CDN + WAF + DDoS)
+CloudFront: 独自ドメインの公開入口、TLS、CDN キャッシュ
 ↓
-Lambda Function URL
+API Gateway: ルーティング、認証、API の制御
 ↓
-Lambda
+Lambda: ビジネスロジック

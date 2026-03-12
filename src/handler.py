@@ -26,7 +26,16 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
       }
    return {
       "statusCode": 200,
-      "body": "sphereworld.org",
+      "headers": {"content-type": "application/json"},
+      "body": json.dumps(
+         {
+            "message": "Hello from sphereworld.org!",
+            "rawPath": event.get("rawPath"),
+            "stage": event.get("requestContext", {}).get("stage"),
+            "httpPath": event.get("requestContext", {}).get("http", {}).get("path"),
+            "routeKey": event.get("routeKey"),
+         }
+      ),
    }
 
 
