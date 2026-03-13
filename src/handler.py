@@ -5,7 +5,7 @@ from aws_lambda_typing import context as context_
 from aws_lambda_typing.events import APIGatewayProxyEventV2
 from aws_lambda_typing.responses import APIGatewayProxyResponseV2
 
-from libs.crypto import decrypt
+from libs.crypto import decrypt, encrypt
 from services.micro_cms import fetch_redirect_url
 
 logger = logging.getLogger()
@@ -14,9 +14,10 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
    path = (event.get("rawPath") or event.get("path") or "").strip("/") or ""
-   logger.info(f"Received request for path: {path}")
    if path == "redirect":
       return handle_redirect(event, context)
+   if path == "encrypt":
+      return handle_encrypt(event, context)
    if path == "test":
       redirect_url = fetch_redirect_url("google")
       return {
@@ -26,17 +27,45 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
       }
    return {
       "statusCode": 200,
-      "headers": {"content-type": "application/json", "Cache-Control": "public, max-age=3600"},
+      "headers": {"content-type": "application/json"},
       "body": json.dumps(
          {
             "message": "Hello from sphereworld.org!",
-            "rawPath": event.get("rawPath"),
-            "stage": event.get("requestContext", {}).get("stage"),
-            "httpPath": event.get("requestContext", {}).get("http", {}).get("path"),
-            "routeKey": event.get("routeKey"),
+            # "rawPath": event.get("rawPath"),
+            # "stage": event.get("requestContext", {}).get("stage"),
+            # "httpPath": event.get("requestContext", {}).get("http", {}).get("path"),
+            # "routeKey": event.get("routeKey"),
          }
       ),
    }
+
+
+def handle_encrypt(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
+   try:
+      query_params = event.get("queryStringParameters", {}) or {}
+      work_id = query_params.get("work_id") or ""
+
+      if not work_id:
+         logger.error("Error: work_id parameter is missing")
+         return {
+            "statusCode": 400,
+            "headers": {"Content-Type": "application/json", "cache-control": "no-cache"},
+            "body": json.dumps({"error": "work_id parameter is required"}),
+         }
+
+      encrypted_id = encrypt(work_id)
+      return {
+         "statusCode": 200,
+         "headers": {"Content-Type": "application/json", "cache-control": "no-cache"},
+         "body": json.dumps({"id": encrypted_id}),
+      }
+   except Exception as e:
+      logger.error(f"Error in handle_encrypt: {str(e)}")
+      return {
+         "statusCode": 500,
+         "headers": {"Content-Type": "application/json"},
+         "body": json.dumps({"error": f"Failed to encrypt: {str(e)}"}),
+      }
 
 
 def handle_redirect(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
