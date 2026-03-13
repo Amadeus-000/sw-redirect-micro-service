@@ -26,7 +26,7 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
       }
    return {
       "statusCode": 200,
-      "headers": {"content-type": "application/json"},
+      "headers": {"content-type": "application/json", "Cache-Control": "public, max-age=3600"},
       "body": json.dumps(
          {
             "message": "Hello from sphereworld.org!",
