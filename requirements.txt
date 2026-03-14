@@ -1,3 +1,4 @@
 cryptography
 aws-lambda-typing
 requests
+python-dotenv

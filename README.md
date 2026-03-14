@@ -62,7 +62,7 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
 `https://dqqvl5huzxx3uy7vih5xn5elly0poazt.lambda-url.ap-northeast-1.on.aws/redirect?id=gAAAAABpqAjrwo3tuFfJadLPkOWqw1vOh7rIIE4SbQVy39f5zhuuX6TgwC-8UaNSiuigbjHT0c02ml0LC4u7jR-wpCACSn7AVQ%3D%3D`
 
 - 本番
-`https://sphereworld.org/redirect/?id=gAAAAABpqAjrwo3tuFfJadLPkOWqw1vOh7rIIE4SbQVy39f5zhuuX6TgwC-8UaNSiuigbjHT0c02ml0LC4u7jR-wpCACSn7AVQ%3D%3D`
+`https://sphereworld.org/redirect/?id=b9sjmr7tjks`
 
 ※URLエンコード必須
 
