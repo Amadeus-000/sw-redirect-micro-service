@@ -16,10 +16,8 @@ def lambda_handler(event: APIGatewayProxyEventV2, context: context_.Context) -> 
    path = (event.get("rawPath") or event.get("path") or "").strip("/") or ""
    if path == "redirect":
       return handle_redirect(event, context)
-   if path == "encrypt":
-      return handle_encrypt(event, context)
    if path == "test":
-      redirect_url = fetch_redirect_url("google")
+      redirect_url = fetch_redirect_url("b9sjmr7tjks")  # Google.comへのリダイレクトURLを取得するテストコード
       return {
          "statusCode": 200,
          "headers": {"Content-Type": "application/json"},
@@ -71,20 +69,16 @@ def handle_encrypt(event: APIGatewayProxyEventV2, context: context_.Context) -> 
 def handle_redirect(event: APIGatewayProxyEventV2, context: context_.Context) -> APIGatewayProxyResponseV2:
    try:
       query_params = event.get("queryStringParameters", {}) or {}
-      encrypted_id = query_params.get("id") or ""
+      id = query_params.get("id") or ""
 
-      if not encrypted_id:
+      if not id:
          logger.error("Error: id parameter is missing")
          return {
             "statusCode": 400,
             "body": json.dumps({"error": "id parameter is required"}),
          }
 
-      logger.info(f"Encrypted ID: {encrypted_id}")
-      work_id = decrypt(encrypted_id)
-      logger.info(f"Decrypted work_id: {work_id}")
-
-      redirect_url = fetch_redirect_url(work_id)
+      redirect_url = fetch_redirect_url(id)
       logger.info(f"Redirect URL: {redirect_url}")
 
       if not redirect_url:
