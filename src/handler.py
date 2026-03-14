@@ -5,7 +5,7 @@ from aws_lambda_typing import context as context_
 from aws_lambda_typing.events import APIGatewayProxyEventV2
 from aws_lambda_typing.responses import APIGatewayProxyResponseV2
 
-from libs.crypto import decrypt, encrypt
+from libs.crypto import encrypt
 from services.micro_cms import fetch_redirect_url
 
 logger = logging.getLogger()
